@@ -25,4 +25,12 @@ if [ ! -f $proxy_multi_file ]; then
     echo "proxy_multi generated: $proxy_multi_file"
 fi
 
+public_ip=$(curl --silent cip.cc|sed -n 1p|awk '{print $3}')
+proxy_domain_hex=$(echo -n $proxy_domain | xxd -ps)
+proxy_tls_secret=ee$secret$proxy_domain_hex
+tg_proxy_url=tg://proxy?server=$public_ip\&port=$proxy_http_port\&secret=$proxy_tls_secret
+echo
+echo "tg_proxy_url generated: $tg_proxy_url"
+echo
+
 /usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain
