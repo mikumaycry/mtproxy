@@ -21,7 +21,7 @@ if [ ! -f $proxy_secret_file ]; then
 fi
 
 if [ ! -f $proxy_multi_file ]; then
-    curl -s https://core.telegram.org/getProxyConfig -o
+    curl -s https://core.telegram.org/getProxyConfig -o $proxy_multi_file
     echo "proxy_multi generated: $proxy_multi_file"
 fi
 
