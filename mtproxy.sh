@@ -25,6 +25,9 @@ if [ ! -f $proxy_multi_file ]; then
     echo "proxy_multi generated: $proxy_multi_file"
 fi
 
+local_iface=$(ip route | awk '/default/ { print $5 }')
+local_ip=$(ip route show dev $local_iface | awk '/src/ {print $7}')
+
 public_ip=$(curl --silent cip.cc|sed -n 1p|awk '{print $3}')
 proxy_domain_hex=$(echo -n $proxy_domain | xxd -ps)
 proxy_tls_secret=ee$secret$proxy_domain_hex
@@ -33,4 +36,10 @@ echo
 echo "tg_proxy_url generated: $tg_proxy_url"
 echo
 
-/usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain
+if [ "$local_ip" != "$public_ip" ]; then
+    echo "enable nat for mtproxy"
+    /usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain --nat-info $local_ip:$public_ip
+else 
+    /usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain
+fi
+
