@@ -20,7 +20,7 @@ wbuntu/mtproxy            latest      435b1e0d14e2   4 hours ago    276MB
 
 ## 运行容器
 
-- mtproto-proxy需要获取客户端IP，使用默认的bridge网络存在NAT与IP地址变动问题，这里使用宿主机网络运行容器
+- mtproto-proxy需要获取客户端IP，若服务器网络环境存在NAT时，需要提供NAT信息，启动脚本已集成NAT参数检测
 - 启动脚本默认读取三个环境变量
   - PORT：默认 **8888**，用于本地获取统计信息
   - HTTPPORT：默认 **8443**，用于供客户端通过公网连接代理
@@ -54,13 +54,13 @@ tg_proxy_url generated: tg://proxy?server=xx.xx.xx.xx&port=xxxx&secret=xxxxxxxxx
 ### 使用自定义参数运行容器
 
 ```shell
-docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=2333 -e HTTPPORT=6666 -e DOMAIN=apple.com wbuntu/mtproxy:latest
+docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:latest
 ```
 
 ### 使用已构建的镜像运行服务
 
-最新构建的版本为v0.1，托管于DockerHub，若无法拉取时，可自行构建
+最新构建的版本为v0.2，托管于DockerHub，若无法拉取时，可自行构建
 
 ```shell
-docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=2333 -e HTTPPORT=6666 -e DOMAIN=apple.com wbuntu/mtproxy:v0.1
+docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:v0.2
 ```
