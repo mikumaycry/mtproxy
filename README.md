@@ -59,8 +59,8 @@ docker run -d --restart always --network host --name mtproxy -v /data:/data -e  
 
 ### 使用已构建的镜像运行服务
 
-最新构建的版本为v0.2，托管于DockerHub，若无法拉取时，可自行构建
+镜像托管于DockerHub，若无法拉取时，可自行构建
 
 ```shell
-docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:v0.2
+docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:latest
 ```
