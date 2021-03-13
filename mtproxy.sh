@@ -8,6 +8,7 @@ proxy_multi_file=/data/proxy_multi
 proxy_port="${PORT:-8888}"
 proxy_http_port="${HTTPPORT:-8443}"
 proxy_domain="${DOMAIN:-cloudflare.com}"
+proxy_tag="$TAG"
 
 if [ ! -f $secret_file ]; then
     head -c 16 /dev/urandom | xxd -ps |cat > $secret_file
@@ -32,14 +33,20 @@ public_ip=$(curl --silent cip.cc|sed -n 1p|awk '{print $3}')
 proxy_domain_hex=$(echo -n $proxy_domain | xxd -ps)
 proxy_tls_secret=ee$secret$proxy_domain_hex
 tg_proxy_url=tg://proxy?server=$public_ip\&port=$proxy_http_port\&secret=$proxy_tls_secret
+
 echo
 echo "tg_proxy_url generated: $tg_proxy_url"
-echo
+mt_cmd="/usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain"
 
 if [ "$local_ip" != "$public_ip" ]; then
     echo "enable nat for mtproxy"
-    /usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain --nat-info $local_ip:$public_ip
-else 
-    /usr/bin/mtproto-proxy -u root -p $proxy_port -H $proxy_http_port -S $secret --aes-pwd $proxy_secret_file $proxy_multi_file -D $proxy_domain
+    mt_cmd=$mt_cmd" --nat-info $local_ip:$public_ip"
 fi
 
+if [ -n "$proxy_tag" ]; then
+    echo "enable proxy tag"
+    mt_cmd=$mt_cmd" --proxy-tag $proxy_tag"
+fi
+echo
+
+eval $mt_cmd
