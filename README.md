@@ -33,7 +33,7 @@ wbuntu/mtproxy            latest      435b1e0d14e2   4 hours ago    276MB
 **运行容器**
 
 ```shell
-docker run -d --restart always --network host --name mtproxy -v /data:/data wbuntu/mtproxy:latest
+docker run -d --restart always  --name mtproxy -v /data:/data -p 8443:8443 wbuntu/mtproxy:latest
 ```
 
 **获取代理链接**
@@ -54,7 +54,7 @@ tg_proxy_url generated: tg://proxy?server=xx.xx.xx.xx&port=xxxx&secret=xxxxxxxxx
 ### 使用自定义参数运行容器
 
 ```shell
-docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:latest
+docker run -d --restart always --name mtproxy -v /data:/data -p 8443:8443 -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:latest
 ```
 
 ### 使用已构建的镜像运行服务
@@ -62,5 +62,5 @@ docker run -d --restart always --network host --name mtproxy -v /data:/data -e  
 镜像托管于DockerHub，若无法拉取时，可自行构建
 
 ```shell
-docker run -d --restart always --network host --name mtproxy -v /data:/data -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:latest
+docker run -d --restart always --network host --name mtproxy -v /data:/data -p 8443:8443  -e  PORT=8888 -e HTTPPORT=8443 -e DOMAIN=apple.com wbuntu/mtproxy:latest
 ```
